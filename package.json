@@ -1,6 +1,6 @@
 {
   "name": "real-apollo-codegen-webpack-plugin",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Fork of apollo-codegen-webpack-plugin",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

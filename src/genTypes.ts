@@ -2,7 +2,7 @@ const genExec = require('./genExec');
 import { RealApolloCodegenWebpackPluginOptions } from './index';
 
 const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
-  const { output, apolloPath, ...flags } = options;
+  const { output, apolloPath, critical, ...flags } = options;
   const command = Object.keys(flags).reduce((acc, option) => {
     if (flags[option] === true) return `${acc} --${option}`;
 
@@ -10,7 +10,7 @@ const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
   }, `client:codegen ${output || ''}`);
 
   return genExec('Generating types', command, apolloPath).catch(() => {
-    if (options.critical) {
+    if (critical) {
       process.exit(1);
     }
   });
