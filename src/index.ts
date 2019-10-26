@@ -1,6 +1,6 @@
-import minimatch from 'minimatch';
-import { fetchSchema } from './fetchSchema';
-import { genTypes } from './genTypes';
+const minimatch = require('minimatch');
+const fetchSchema = require('./fetchSchema');
+const genTypes = require('./genTypes');
 
 interface Compilation {
   fileTimestamps: Map<string, number>;

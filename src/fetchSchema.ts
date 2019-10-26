@@ -1,4 +1,4 @@
-import { genExec } from './genExec';
+const genExec = require('./genExec');
 import { RealApolloCodegenWebpackPluginOptions } from './index';
 
 export const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
