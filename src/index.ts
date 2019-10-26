@@ -20,6 +20,7 @@ export interface RealApolloCodegenWebpackPluginOptions {
   critical?: boolean;
   includes: string;
   apolloPath?: string;
+  output?: string;
   [key: string]: boolean | string | undefined;
 }
 class RealApolloCodegenWebpackPlugin {

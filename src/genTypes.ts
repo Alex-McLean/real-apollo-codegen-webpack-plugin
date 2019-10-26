@@ -7,7 +7,7 @@ const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
     if (flags[option] === true) return `${acc} --${option}`;
 
     return `${acc} --${option}="${flags[option]}"`;
-  }, `client:codegen ${output || ''}`);
+  }, `client:codegen ${output || '__generated__'}`);
 
   return genExec('Generating types', command, apolloPath).catch(() => {
     if (critical) {
