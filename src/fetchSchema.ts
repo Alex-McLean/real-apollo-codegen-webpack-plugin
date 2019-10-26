@@ -13,7 +13,7 @@ const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
   if (skipSSLValidation) command.push(`--skipSSLValidation`);
   if (key) command.push(`--key="${key}"`);
 
-  return genExec('Downloading schema', command.join(' ')).catch(() => {
+  return genExec('Downloading schema', command.join(' '), options.apolloPath).catch(() => {
     if (options.critical) {
       process.exit(1);
     }

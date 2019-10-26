@@ -9,7 +9,7 @@ const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
     return `${acc} --${option}="${flags[option]}"`;
   }, `client:codegen ${output || ''}`);
 
-  return genExec('Generating types', command).catch(() => {
+  return genExec('Generating types', command, options.apolloPath).catch(() => {
     if (options.critical) {
       process.exit(1);
     }
