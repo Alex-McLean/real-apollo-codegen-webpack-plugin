@@ -1,7 +1,7 @@
 const genExec = require('./genExec');
 import { RealApolloCodegenWebpackPluginOptions } from './index';
 
-export const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
+const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
   const { endpoint, localSchemaFile, config, header, tag, skipSSLValidation, key } = options;
   const command = ['service:download'];
 
@@ -19,3 +19,5 @@ export const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
     }
   });
 };
+
+module.exports = fetchSchema;

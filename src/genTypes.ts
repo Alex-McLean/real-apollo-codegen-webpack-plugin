@@ -1,7 +1,7 @@
 const genExec = require('./genExec');
 import { RealApolloCodegenWebpackPluginOptions } from './index';
 
-export const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
+const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
   const { output, ...flags } = options;
   const command = Object.keys(flags).reduce((acc, option) => {
     if (flags[option] === true) return `${acc} --${option}`;
@@ -15,3 +15,5 @@ export const genTypes = (options: RealApolloCodegenWebpackPluginOptions) => {
     }
   });
 };
+
+module.exports = genTypes;
