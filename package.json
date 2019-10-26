@@ -1,0 +1,30 @@
+{
+  "name": "real-apollo-codegen-webpack-plugin",
+  "version": "0.1.0",
+  "description": "Fork of apollo-codegen-webpack-plugin",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "postversion": "git push && git push --tags"
+  },
+  "files": ["lib/**/*"],
+  "repository": "https://github.com/Alex-McLean/real-apollo-codegen-webpack-plugin.git",
+  "author": "Alex McLean",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/minimatch": "^3.0.3",
+    "@types/node": "^12.11.7",
+    "prettier": "^1.18.2",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "child_process": "^1.0.2",
+    "minimatch": "^3.0.4",
+    "ora": "^4.0.2",
+    "path": "^0.12.7"
+  }
+}
