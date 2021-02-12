@@ -1,13 +1,8 @@
+import { Compiler, Plugin } from "webpack";
+
 const minimatch = require('minimatch');
 const fetchSchema = require('./fetchSchema');
 const genTypes = require('./genTypes');
-
-interface Compilation {
-  fileTimestamps: Map<string, number>;
-  options: {
-    context: string;
-  }
-}
 
 export interface RealApolloCodegenWebpackPluginOptions {
   endpoint?: string;
@@ -23,7 +18,7 @@ export interface RealApolloCodegenWebpackPluginOptions {
   output?: string;
   [key: string]: boolean | string | undefined;
 }
-class RealApolloCodegenWebpackPlugin {
+class RealApolloCodegenWebpackPlugin extends Plugin {
   private readonly id: string;
   private readonly options: RealApolloCodegenWebpackPluginOptions;
   private readonly startTime: number;
@@ -32,6 +27,8 @@ class RealApolloCodegenWebpackPlugin {
   private schemaFetched: boolean;
 
   constructor(options: RealApolloCodegenWebpackPluginOptions) {
+    super();
+
     this.id = 'ApolloWebpackPlugin';
     this.options = options;
     this.startTime = Date.now();
@@ -40,12 +37,12 @@ class RealApolloCodegenWebpackPlugin {
     this.schemaFetched = false;
   }
 
-  hasChanged(compilation: Compilation) {
+  hasChanged(compiler: Compiler) {
     const timestamps = new Map<string, number>();
-    let hasChanged = compilation.fileTimestamps.size === 0; // initial compilation
+    let hasChanged = !compiler.fileTimestamps?.size; // initial compilation
 
-    compilation.fileTimestamps.forEach((timestamp, file) => {
-      if (minimatch(file.replace(compilation.options.context, '.'), this.options.includes)) {
+    compiler.fileTimestamps.forEach((timestamp, file) => {
+      if (minimatch(file.replace(compiler.options.context ?? '', '.'), this.options.includes)) {
         timestamps.set(file, timestamp);
         const prevTimestamp = this.prevTimestamps.get(file);
         if ((prevTimestamp || this.startTime) < (timestamp || Infinity)) {
@@ -60,9 +57,9 @@ class RealApolloCodegenWebpackPlugin {
     return hasChanged;
   }
 
-  apply(compiler: any) {
-    const run = (compilation: Compilation) => {
-      const hasChanged = this.hasChanged(compilation);
+  apply(compiler: Compiler) {
+    const run = (compiler: Compiler) => {
+      const hasChanged = this.hasChanged(compiler);
 
       if (!hasChanged) {
         console.log('Apollo Codegen: No files changed');
