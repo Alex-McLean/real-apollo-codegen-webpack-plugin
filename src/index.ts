@@ -1,8 +1,13 @@
-import { Compiler, Plugin } from "webpack";
-
 const minimatch = require('minimatch');
 const fetchSchema = require('./fetchSchema');
 const genTypes = require('./genTypes');
+
+interface Compilation {
+  modifiedFiles: Set<string>;
+  options: {
+    context: string;
+  }
+}
 
 export interface RealApolloCodegenWebpackPluginOptions {
   endpoint?: string;
@@ -18,48 +23,38 @@ export interface RealApolloCodegenWebpackPluginOptions {
   output?: string;
   [key: string]: boolean | string | undefined;
 }
-class RealApolloCodegenWebpackPlugin extends Plugin {
+class RealApolloCodegenWebpackPlugin {
   private readonly id: string;
   private readonly options: RealApolloCodegenWebpackPluginOptions;
   private readonly startTime: number;
 
-  private prevTimestamps: Map<string, number>;
   private schemaFetched: boolean;
 
   constructor(options: RealApolloCodegenWebpackPluginOptions) {
-    super();
-
     this.id = 'ApolloWebpackPlugin';
     this.options = options;
     this.startTime = Date.now();
 
-    this.prevTimestamps = new Map<string, number>();
     this.schemaFetched = false;
   }
 
-  hasChanged(compiler: Compiler) {
+  hasChanged(compilation: Compilation) {
     const timestamps = new Map<string, number>();
-    let hasChanged = !compiler.fileTimestamps?.size; // initial compilation
+    let hasChanged = !compilation.modifiedFiles?.size; // initial compilation
 
-    compiler.fileTimestamps.forEach((timestamp, file) => {
-      if (minimatch(file.replace(compiler.options.context ?? '', '.'), this.options.includes)) {
-        timestamps.set(file, timestamp);
-        const prevTimestamp = this.prevTimestamps.get(file);
-        if ((prevTimestamp || this.startTime) < (timestamp || Infinity)) {
-          console.log(`Apollo Codegen: File changed: ${file}`);
-          hasChanged = true;
-        }
+    compilation.modifiedFiles?.forEach((file) => {
+      if (minimatch(file.replace(compilation.options.context, '.'), this.options.includes)) {
+        console.log(`Apollo Codegen: File changed: ${file}`);
+        hasChanged = true;
       }
     });
-
-    this.prevTimestamps = timestamps;
 
     return hasChanged;
   }
 
-  apply(compiler: Compiler) {
-    const run = (compiler: Compiler) => {
-      const hasChanged = this.hasChanged(compiler);
+  apply(compiler: any) {
+    const run = (compilation: Compilation) => {
+      const hasChanged = this.hasChanged(compilation);
 
       if (!hasChanged) {
         console.log('Apollo Codegen: No files changed');
