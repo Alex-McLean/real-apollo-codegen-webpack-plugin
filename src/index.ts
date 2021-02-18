@@ -23,7 +23,8 @@ export interface RealApolloCodegenWebpackPluginOptions {
   output?: string;
   [key: string]: boolean | string | undefined;
 }
-class RealApolloCodegenWebpackPlugin {
+
+export class RealApolloCodegenWebpackPlugin {
   private readonly id: string;
   private readonly options: RealApolloCodegenWebpackPluginOptions;
   private readonly startTime: number;
@@ -84,5 +85,3 @@ class RealApolloCodegenWebpackPlugin {
     compiler.hooks.watchRun.tapPromise(this.id, run);
   }
 }
-
-module.exports = RealApolloCodegenWebpackPlugin;
