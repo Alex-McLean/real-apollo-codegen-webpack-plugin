@@ -24,7 +24,7 @@ export interface RealApolloCodegenWebpackPluginOptions {
   [key: string]: boolean | string | undefined;
 }
 
-export class RealApolloCodegenWebpackPlugin {
+export default class RealApolloCodegenWebpackPlugin {
   private readonly id: string;
   private readonly options: RealApolloCodegenWebpackPluginOptions;
   private readonly startTime: number;
