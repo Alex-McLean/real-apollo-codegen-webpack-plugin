@@ -6,7 +6,7 @@ const genExec = (name: string, command: string, apolloPath?: string) => {
   const spinner = ora(name).start();
   const apollo = apolloPath || 'apollo';
 
-  return new Promise<void>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     cp.exec(`${apollo} ${command}`, (error: Error, stdout: string, stderr: string) => {
       if (error) {
         spinner.fail(`${name}\n${chalk.dim(error.message)}`);

@@ -3,7 +3,7 @@ const fetchSchema = require('./fetchSchema');
 const genTypes = require('./genTypes');
 
 interface Compilation {
-  modifiedFiles: Set<string>;
+  fileTimestamps: Map<string, number>;
   options: {
     context: string;
   }
@@ -28,6 +28,7 @@ class RealApolloCodegenWebpackPlugin {
   private readonly options: RealApolloCodegenWebpackPluginOptions;
   private readonly startTime: number;
 
+  private prevTimestamps: Map<string, number>;
   private schemaFetched: boolean;
 
   constructor(options: RealApolloCodegenWebpackPluginOptions) {
@@ -35,19 +36,26 @@ class RealApolloCodegenWebpackPlugin {
     this.options = options;
     this.startTime = Date.now();
 
+    this.prevTimestamps = new Map<string, number>();
     this.schemaFetched = false;
   }
 
   hasChanged(compilation: Compilation) {
     const timestamps = new Map<string, number>();
-    let hasChanged = !compilation.modifiedFiles?.size; // initial compilation
+    let hasChanged = compilation.fileTimestamps.size === 0; // initial compilation
 
-    compilation.modifiedFiles?.forEach((file) => {
+    compilation.fileTimestamps.forEach((timestamp, file) => {
       if (minimatch(file.replace(compilation.options.context, '.'), this.options.includes)) {
-        console.log(`Apollo Codegen: File changed: ${file}`);
-        hasChanged = true;
+        timestamps.set(file, timestamp);
+        const prevTimestamp = this.prevTimestamps.get(file);
+        if ((prevTimestamp || this.startTime) < (timestamp || Infinity)) {
+          console.log(`Apollo Codegen: File changed: ${file}`);
+          hasChanged = true;
+        }
       }
     });
+
+    this.prevTimestamps = timestamps;
 
     return hasChanged;
   }
