@@ -1,9 +1,20 @@
-const genExec = require('./genExec');
-import { RealApolloCodegenWebpackPluginOptions } from './index';
+import { genExec } from "./genExec";
+import { RealApolloCodegenWebpackPluginOptions } from "./index";
 
-const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
-  const { endpoint, localSchemaFile, config, header, tag, skipSSLValidation, key, apolloPath } = options;
-  const command = ['service:download'];
+export const fetchSchema = (
+  options: RealApolloCodegenWebpackPluginOptions
+): Promise<void> => {
+  const {
+    endpoint,
+    localSchemaFile,
+    config,
+    header,
+    tag,
+    skipSSLValidation,
+    key,
+    apolloPath,
+  } = options;
+  const command = ["service:download"];
 
   if (localSchemaFile) command.push(localSchemaFile);
   if (config) command.push(`-c="${config}"`);
@@ -13,11 +24,11 @@ const fetchSchema = (options: RealApolloCodegenWebpackPluginOptions) => {
   if (skipSSLValidation) command.push(`--skipSSLValidation`);
   if (key) command.push(`--key="${key}"`);
 
-  return genExec('Downloading schema', command.join(' '), apolloPath).catch(() => {
-    if (options.critical) {
-      process.exit(1);
+  return genExec("Downloading schema", command.join(" "), apolloPath).catch(
+    () => {
+      if (options.critical) {
+        process.exit(1);
+      }
     }
-  });
+  );
 };
-
-module.exports = fetchSchema;

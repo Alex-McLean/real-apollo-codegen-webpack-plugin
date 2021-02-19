@@ -1,12 +1,12 @@
-const minimatch = require('minimatch');
-const fetchSchema = require('./fetchSchema');
-const genTypes = require('./genTypes');
+import minimatch from "minimatch";
+import { fetchSchema } from "./fetchSchema";
+import { genTypes } from "./genTypes";
 
 interface Compilation {
   fileTimestamps: Map<string, number>;
   options: {
     context: string;
-  }
+  };
 }
 
 export interface RealApolloCodegenWebpackPluginOptions {
@@ -33,7 +33,7 @@ export default class RealApolloCodegenWebpackPlugin {
   private schemaFetched: boolean;
 
   constructor(options: RealApolloCodegenWebpackPluginOptions) {
-    this.id = 'ApolloWebpackPlugin';
+    this.id = "ApolloWebpackPlugin";
     this.options = options;
     this.startTime = Date.now();
 
@@ -41,12 +41,17 @@ export default class RealApolloCodegenWebpackPlugin {
     this.schemaFetched = false;
   }
 
-  hasChanged(compilation: Compilation) {
+  hasChanged(compilation: Compilation): boolean {
     const timestamps = new Map<string, number>();
     let hasChanged = compilation.fileTimestamps.size === 0; // initial compilation
 
     compilation.fileTimestamps.forEach((timestamp, file) => {
-      if (minimatch(file.replace(compilation.options.context, '.'), this.options.includes)) {
+      if (
+        minimatch(
+          file.replace(compilation.options.context, "."),
+          this.options.includes
+        )
+      ) {
         timestamps.set(file, timestamp);
         const prevTimestamp = this.prevTimestamps.get(file);
         if ((prevTimestamp || this.startTime) < (timestamp || Infinity)) {
@@ -66,7 +71,7 @@ export default class RealApolloCodegenWebpackPlugin {
       const hasChanged = this.hasChanged(compilation);
 
       if (!hasChanged) {
-        console.log('Apollo Codegen: No files changed');
+        console.log("Apollo Codegen: No files changed");
         return Promise.resolve();
       }
 
